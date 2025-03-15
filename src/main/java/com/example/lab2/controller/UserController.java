@@ -46,6 +46,7 @@ public class UserController {
                     @ApiResponse(responseCode = "400", description = "Utilizatorul exista deja")
             }
     )
+    @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/addUser")
     public ResponseEntity<String> addUser(@RequestBody UserAddDTO userAddDTO) {
         try {
