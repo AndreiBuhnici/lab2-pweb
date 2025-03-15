@@ -10,7 +10,9 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,8 +32,9 @@ public class UserController {
             }
     )
     @GetMapping("/getAllUsers")
-    public ResponseEntity<List<UserEntity>> getAllUsers() {
-        return ResponseEntity.ok(userService.getAllUsers());
+    public ResponseEntity<Page<UserEntity>> getAllUsers(@RequestParam(defaultValue = "0") int pageNo,
+                                                        @RequestParam(defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok(userService.getAllUsers(pageNo, pageSize));
     }
 
 
