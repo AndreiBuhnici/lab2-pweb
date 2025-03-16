@@ -1,9 +1,8 @@
 package com.example.lab2.controller;
 
 import com.example.lab2.dto.UserAddDTO;
+import com.example.lab2.dto.UserDTO;
 import com.example.lab2.exception.UserAlreadyExistsException;
-import com.example.lab2.model.UserEntity;
-import com.example.lab2.model.UserRoleEnum;
 import com.example.lab2.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,9 +30,10 @@ public class UserController {
                             content = @Content(schema = @Schema(implementation = List.class))),
             }
     )
+    @PreAuthorize("hasAuthority('ADMIN')")
     @GetMapping("/getAllUsers")
-    public ResponseEntity<Page<UserEntity>> getAllUsers(@RequestParam(defaultValue = "0") int pageNo,
-                                                        @RequestParam(defaultValue = "10") int pageSize) {
+    public ResponseEntity<Page<UserDTO>> getAllUsers(@RequestParam(defaultValue = "0") int pageNo,
+                                                     @RequestParam(defaultValue = "10") int pageSize) {
         return ResponseEntity.ok(userService.getAllUsers(pageNo, pageSize));
     }
 
@@ -52,7 +52,7 @@ public class UserController {
         try {
             userService.addUser(userAddDTO);
         } catch (UserAlreadyExistsException e) {
-            return ResponseEntity.badRequest().body("User already exists");
+            return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok("User added.");
     }

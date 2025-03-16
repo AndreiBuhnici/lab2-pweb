@@ -39,7 +39,8 @@ public class SecurityConfig {
                         "/api/auth/**"
                 ).permitAll())
                 .authorizeHttpRequests(auth -> auth.requestMatchers(
-                        "/api/user/**"
+                        "/api/user/**",
+                        "/api/files/**"
                 ).authenticated())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(getAuthenticationProvider())

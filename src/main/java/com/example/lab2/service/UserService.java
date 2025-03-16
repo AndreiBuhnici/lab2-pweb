@@ -1,6 +1,7 @@
 package com.example.lab2.service;
 
 import com.example.lab2.dto.UserAddDTO;
+import com.example.lab2.dto.UserDTO;
 import com.example.lab2.dto.UserRegisterDTO;
 import com.example.lab2.exception.UserAlreadyExistsException;
 import com.example.lab2.model.UserEntity;
@@ -15,6 +16,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.Optional;
 
 @Service
@@ -27,9 +29,11 @@ public class UserService implements UserDetailsService {
         this.encoder = encoder;
     }
 
-    public Page<UserEntity> getAllUsers(int pageNo, int pageSize) {
+    public Page<UserDTO> getAllUsers(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
-        return userRepository.findAll(pageable);
+        Page<UserEntity> users = userRepository.findAll(pageable);
+        return users.map(user -> new UserDTO(user.getId(), user.getName(), user.getEmail(), user.getPassword(), user.getRole(),
+                user.getCreatedAt(), user.getUpdatedAt()));
     }
 
     public void register(UserRegisterDTO userRegisterDTO) throws UserAlreadyExistsException {
@@ -49,6 +53,7 @@ public class UserService implements UserDetailsService {
         user.setName(userAddDTO.getName());
         user.setPassword(encoder.encode(userAddDTO.getPassword()));
         user.setRole(userAddDTO.getRole());
+        user.setUserFiles(new HashSet<>());
 
         userRepository.save(user);
     }
